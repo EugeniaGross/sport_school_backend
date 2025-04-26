@@ -1,0 +1,492 @@
+send: email
+file_back:[
+docx
+]
+type_document: Счет на оплату в электронной форме
+document_data:{
+guid: b0d4ce5d-2757-4699-948c-cfa72ba94f86
+year_file_created: 2024
+month_file_created: 10
+day_file_created: 10
+id_recipient_electronic_document_management_operator: 000
+id_recipient_file: string
+id_sender_electronic_document_management_operator: 000
+id_sender_file: string
+function: 0
+date_created_document: 10.09.2024
+time_created_document: 10:10:00
+content:{
+document_date: 10.09.2024
+document_number: string
+total_product_names: 10
+basis:[
+{
+details_document:{
+additional_information: string
+details_subjects:[
+{
+inn_organization: 1234567890
+}
+]
+document_date: 10.10.2024
+document_name: string
+document_number: string
+id_document: string
+id_document_exchange_file_signed_first_party: string
+info_about_information_system: string
+url_system: string
+}
+}
+]
+product_info:[
+{
+serial_number: 1
+product_name: 1
+quantity: 12
+unit_code: 123
+name_unit_measurement: string
+discounted_price: 1100
+cost_without_nds: 11000
+cost_with_nds: 11000
+price_without_discount: 10000
+cost_without_nds_without_discount: 10000
+cost_with_nds_without_discount: 11000
+tax_rate: 0%
+amount_discount: 1000
+amount_nds: 1000
+amount_nds_without_discount: 1000
+additional_info_product:{
+sign: 1
+additional_info_about_sign: stri
+country_code: 123
+short_country_name: string
+product_description: string
+product_grade: string
+product_series: string
+item_number: string
+product_code: string
+catalog_code: stringstringstringstringstr
+product_type_code: stringstri
+additional_info_product_identified:[
+{
+name_information_system: string
+accounting_unit: string
+other_info: string
+identification_number:[
+string
+]
+}
+]
+}
+info_field:[
+{
+id_file: b0d4ce5d-2757-4699-948c-cfa72ba94f86
+text_info:[
+{
+id: string
+value: string
+}
+]
+}
+]
+}
+]
+total_paid:{
+cost_without_nds: 11000
+cost_with_nds: 11000
+discount_amount: 1100
+}
+additional_info_document:{
+date_beginning_delivery_product: 10.09.2024
+purpose_payment: string
+unique_info_payment: string
+payment_method: string
+payment_date_and_time_limit: 10.10.2024T10:10:00+03:00
+payment_condition:[
+string
+]
+terms_service_provision:[
+string
+]
+info_field:[
+{
+id_file: b0d4ce5d-2757-4699-948c-cfa72ba94f86
+text_info:[
+{
+id: string
+value: string
+}
+]
+}
+]
+}
+unit_monetary_measurement:{
+currency_name: string
+currency_code: 643
+currency_exchange_rate: 100
+}
+recipient_funds:{
+code_1: 12345
+code_2: 12345
+full_name_organizational_legal_form: string
+structural_division: string
+info_for_participant_document_flow: string
+short_name: string
+individual_entrepreneur:{
+inn: 255714491596
+details_certificate: string
+ogrnip: 123456789012345
+date_ogrnip: 16.09.2015
+other_info: string
+fio:{
+last_name: string
+first_name: string
+middle_name: string
+}
+}
+address:{
+global_location_number: stringstrings
+address_rf:{
+postal_code: 376566
+region_code: 90
+region_name: string
+district: string
+city: string
+locality: string
+street: string
+house: string
+building: string
+flat: string
+other_information: string
+}
+}
+bank_requisites:{
+bank_account_number: string
+bank_name: string
+bank_inn: 4447989934
+bank_kpp: 524346462
+bank_code: 044525974
+correspondent_account_bank: 30101810145250000974
+swift_code: stringst
+}
+contact_information:{
+other_contact_information: string
+phone:[
+89001234567
+]
+email:[
+test@example.com
+]
+}
+}
+payer:{
+code_1: 12345
+code_2: 12345
+full_name_organizational_legal_form: string
+structural_division: string
+info_for_participant_document_flow: string
+short_name: string
+organization:{
+name: string
+inn: 7363601396
+kpp: 123456789
+ogrn: 0113821392940
+}
+address:{
+global_location_number: stringstrings
+address_gar:{
+postal_code: 794546
+region_code: 41
+region_name: string
+unique_number_adress: 3B16Cfc0-a8af-bC83-d73C-41F5beAe8D55
+municipal_area:{
+element_name: string
+type_element: 1
+}
+urban_rural_settlement:{
+element_name: string
+type_element: 1
+}
+locality:{
+element_name: string
+type_element: string
+}
+element_planning_structure:{
+element_name: string
+type_element: string
+}
+element_road_network:{
+element_name: string
+type_element: string
+}
+land_plot_number: string
+building:[
+{
+element_number: 1
+type_element: string
+}
+]
+room_within_building:{
+type_element: string
+element_number: string
+}
+room_within_apartment:{
+type_element: string
+element_number: string
+}
+}
+}
+bank_requisites:{
+bank_account_number: string
+bank_name: string
+bank_inn: 0730483559
+bank_kpp: 626990966
+bank_code: 044525974
+correspondent_account_bank: 30101810145250000974
+swift_code: stringst
+}
+contact_information:{
+other_contact_information: string
+phone:[
+89001234567
+]
+email:[
+test@example.com
+]
+}
+}
+seller:{
+code_1: 12345
+code_2: 12345
+full_name_organizational_legal_form: string
+structural_division: string
+info_for_participant_document_flow: string
+short_name: string
+foreign_organization:{
+status_identification: ИО
+country_code: 123
+country_name: string
+name: string
+id_foreign_organization: string
+other_info: string
+}
+address:{
+global_location_number: stringstrings
+address_inf:{
+county_code: 123
+county_name: string
+address: string
+}
+}
+bank_requisites:{
+bank_account_number: string
+bank_name: string
+bank_inn: 1857576912
+bank_kpp: 051553653
+bank_code: 044525974
+correspondent_account_bank: 30101810145250000974
+swift_code: stringst
+}
+contact_information:{
+other_contact_information: string
+phone:[
+89001234567
+]
+email:[
+test@example.com
+]
+}
+}
+buyer:{
+code_1: 12345
+code_2: 12345
+full_name_organizational_legal_form: string
+structural_division: string
+info_for_participant_document_flow: string
+short_name: string
+individual:{
+inn: 720791530484
+identification_person_status: 0
+other_info: string
+fio:{
+last_name: string
+first_name: string
+middle_name: string
+}
+snils: 123-234-567 89
+}
+address:{
+global_location_number: stringstrings
+address_rf:{
+postal_code: 542325
+region_code: 78
+region_name: string
+district: string
+city: string
+locality: string
+street: string
+house: string
+building: string
+flat: string
+other_information: string
+}
+}
+bank_requisites:{
+bank_account_number: string
+bank_name: string
+bank_inn: 0621828362
+bank_kpp: 154224065
+bank_code: 044525974
+correspondent_account_bank: 30101810145250000974
+swift_code: stringst
+}
+contact_information:{
+other_contact_information: string
+phone:[
+89001234567
+]
+email:[
+test@example.com
+]
+}
+}
+sender:{
+code_1: 12345
+code_2: 12345
+full_name_organizational_legal_form: string
+structural_division: string
+info_for_participant_document_flow: string
+short_name: string
+organization:{
+name: string
+inn: 2552058470
+kpp: 123456789
+ogrn: 9080029243241
+}
+global_location_number: stringstrings
+address:{
+global_location_number: stringstrings
+address_rf:{
+postal_code: 542325
+region_code: 78
+region_name: string
+district: string
+city: string
+locality: string
+street: string
+house: string
+building: string
+flat: string
+other_information: string
+}
+}
+bank_requisites:{
+bank_account_number: string
+bank_name: string
+bank_inn: 7884551762
+bank_kpp: 984851459
+bank_code: 044525974
+correspondent_account_bank: 30101810145250000974
+swift_code: stringst
+}
+contact_information:{
+other_contact_information: string
+phone:[
+89001234567
+]
+email:[
+test@example.com
+]
+}
+}
+recipient:{
+code_1: 12345
+code_2: 12345
+full_name_organizational_legal_form: string
+structural_division: string
+info_for_participant_document_flow: string
+short_name: string
+organization:{
+name: string
+inn: 2552058470
+kpp: 123456789
+ogrn: 9080029243241
+}
+address:{
+global_location_number: stringstrings
+address_rf:{
+postal_code: 542325
+region_code: 78
+region_name: string
+district: string
+city: string
+locality: string
+street: string
+house: string
+building: string
+flat: string
+other_information: string
+}
+}
+bank_requisites:{
+bank_account_number: string
+bank_name: string
+bank_inn: 9282427688
+bank_kpp: 022716751
+bank_code: 044525974
+correspondent_account_bank: 30101810145250000974
+swift_code: stringst
+}
+contact_information:{
+other_contact_information: string
+phone:[
+89001234567
+]
+email:[
+test@example.com
+]
+}
+}
+type_commitment:[
+{
+code: string
+name: string
+}
+]
+}
+signatory:[
+{
+position: string
+signature_type: 1
+method_confirming_authority_sign_document: 3
+additional_information: string
+fio:{
+last_name: string
+first_name: string
+middle_name: string
+}
+information_about_machine_readable_attorney:[
+{
+date_create_attorney: 27.09.2024
+date_internal_registration_attorney: 27.09.2024
+info_about_information_system: string
+internal_registration_number_attorney: string
+number_attorney: b0d4ce5d-2757-4699-948c-cfa72ba94f86
+url: string
+}
+]
+date_signing: 05.10.2024
+}
+]
+info_field:[
+{
+id_file: b0d4ce5d-2757-4699-948c-cfa72ba94f86
+text_info:[
+{
+id: string
+value: string
+}
+]
+}
+]
+}
