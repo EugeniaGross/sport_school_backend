@@ -1,7 +1,0 @@
-send: email
-file_back:[
-docx
-]
-type_document: Машиночитаемая доверенность в формате 5.02 (для налоговых органов)
-document_data:{
-<_io.BytesIO object at 0x000001BCF5522D90>}
