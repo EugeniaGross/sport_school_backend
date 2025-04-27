@@ -1,13 +1,14 @@
 from typing import Optional
 
+
 from litestar.connection import Request
-from upcoming_events.repository import UpcomingEventsAbstractRepository
+from news.repository import NewsAbstractRepository
 
 
-class UpcomingEventsService:
+class NewsService:
 
-    def __init__(self, repo: UpcomingEventsAbstractRepository):
-        self.repo: UpcomingEventsAbstractRepository = repo
+    def __init__(self, repo: NewsAbstractRepository):
+        self.repo: NewsAbstractRepository = repo
 
     async def get_with_filter(
         self,
@@ -26,8 +27,11 @@ class UpcomingEventsService:
 
     async def get_one(self, request: Request, id: int):
         data = await self.repo.get_one(id)
-        if data:
-            data.image = f"{request.base_url}statics/images/{data.image}"
+        if data is None:
+            return data
+        data.image = f"{request.base_url}statics/images/{data.image}"
+        for photo in data.photos:
+            photo.image = f"{request.base_url}statics/images/{photo.image}"
         return data
 
     async def get_total_count(self, type_sport: Optional[str]):

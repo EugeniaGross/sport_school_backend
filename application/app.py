@@ -8,6 +8,7 @@ from litestar.template.config import TemplateConfig
 from litestar.static_files import create_static_files_router
 from litestar.config.cors import CORSConfig
 from litestar.config.allowed_hosts import AllowedHostsConfig
+
 from uvicorn.workers import UvicornWorker
 
 from admin_plugin import AdminPlugin
@@ -16,6 +17,8 @@ from athletes.admin import AthletesAdmin
 from athletes.controller import AthletesController
 from coaches.admin import CoachesAdmin
 from coaches.controller import CoachesController
+from news.admin import NewsAdmin, PhotoNewsAdmin
+from news.controller import NewsController
 from organization.admin import (
     OrganizationDocumentsAdmin,
     OrganizationInfoAdmin,
@@ -47,6 +50,7 @@ api_v1_router = Router(
         CoachesController,
         AthletesController,
         UpcomingEventsController,
+        NewsController,
         VacancyController,
     ],
 )
@@ -63,6 +67,8 @@ admin = AdminPlugin(
         CoachesAdmin,
         AthletesAdmin,
         UpcommingEventsAdmin,
+        NewsAdmin,
+        PhotoNewsAdmin,
         VacanciesAdmin,
     ],
     engine=async_engine,

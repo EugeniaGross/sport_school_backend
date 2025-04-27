@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload
 
-from upcoming_events.models import UpcommingEvents
+from news.models import News
 from database import async_session
 
 
-class UpcomingEventsAbstractRepository(ABC):
+class NewsAbstractRepository(ABC):
 
     @abstractmethod
     async def get_with_filter():
@@ -30,14 +30,14 @@ class UpcomingEventsAbstractRepository(ABC):
         raise NotImplementedError
 
 
-class UpcomingEventsMySQLRepository(UpcomingEventsAbstractRepository):
+class NewsMySQLRepository(NewsAbstractRepository):
 
     @staticmethod
     async def get_all(limit: int, offset: int):
         async with async_session() as session:
             query = (
-                select(UpcommingEvents)
-                .options(joinedload(UpcommingEvents.type_sport))
+                select(News)
+                .options(joinedload(News.type_sport))
                 .offset(offset)
                 .limit(limit)
             )
@@ -49,9 +49,9 @@ class UpcomingEventsMySQLRepository(UpcomingEventsAbstractRepository):
         async with async_session() as session:
             query = (
                 (
-                    select(UpcommingEvents)
-                    .filter(UpcommingEvents.type_sport.has(name=type_sports))
-                    .options(joinedload(UpcommingEvents.type_sport))
+                    select(News)
+                    .filter(News.type_sport.has(name=type_sports))
+                    .options(joinedload(News.type_sport))
                 )
                 .offset(offset)
                 .limit(limit)
@@ -63,26 +63,24 @@ class UpcomingEventsMySQLRepository(UpcomingEventsAbstractRepository):
     async def get_one(id: int):
         async with async_session() as session:
             result = await session.get(
-                UpcommingEvents,
+                News,
                 id,
-                options=[joinedload(UpcommingEvents.type_sport)],
+                options=[joinedload(News.type_sport), joinedload(News.photos)],
             )
             return result
 
     @staticmethod
     async def get_total_count():
         async with async_session() as session:
-            count = await session.scalar(
-                select(func.count(UpcommingEvents.id))
-            )
+            count = await session.scalar(select(func.count(News.id)))
             return count
 
     @staticmethod
     async def get_total_count_with_filter(type_sports):
         async with async_session() as session:
             count = await session.scalar(
-                select(func.count(UpcommingEvents.id)).filter(
-                    UpcommingEvents.type_sport.has(name=type_sports)
+                select(func.count(News.id)).filter(
+                    News.type_sport.has(name=type_sports)
                 )
             )
             return count

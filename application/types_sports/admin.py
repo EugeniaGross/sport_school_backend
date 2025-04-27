@@ -23,5 +23,6 @@ class TypesSportsAdmin(ModelView, model=TypesSports):
         TypesSports.uncoming_events,
         TypesSports.coaches,
         TypesSports.athletes,
+        TypesSports.news,
     ]
     page_size = 50

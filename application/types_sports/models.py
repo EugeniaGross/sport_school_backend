@@ -8,6 +8,7 @@ from database import Base
 if TYPE_CHECKING:
     from athletes.models import Athlet
     from coaches.models import Coach
+    from news.models import News
     from upcoming_events.models import UpcommingEvents
 
 
@@ -25,6 +26,7 @@ class TypesSports(Base):
     athletes: Mapped[list["Athlet"]] = relationship(
         back_populates="type_sport"
     )
+    news: Mapped[list["News"]] = relationship(back_populates="type_sport")
 
     def __repr__(self):
         return f"{self.name}"

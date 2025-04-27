@@ -9,6 +9,7 @@ from database import Base
 from settings import settings
 from athletes.models import *
 from coaches.models import *
+from news.models import *
 from organization.models import *
 from types_sports.models import *
 from upcoming_events.models import *
