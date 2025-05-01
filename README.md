@@ -2,6 +2,10 @@
 ```
 CLIENT_URL=http://localhost:5173
 ALLOWED_HOSTS=localhost,127.0.0.1
+JWT_ALGORITHM = "HS256"
+JWT_SECRET_KEY = "123456789"
+ADMIN_TOKEN_EXPIRE_DAYS = 1
+SECRET_KEY=12345678
 
 MYSQL_ROOT_PASSWORD=root
 MYSQL_DATABASE=sport_school
@@ -11,7 +15,10 @@ MYSQL_HOST=db
 MYSQL_PORT=3306
 ```
 
-Запуск проекта: docker compose up --build</br>
+Запуск проекта: </br>
+```
+docker compose up --build
+```
 Для создания администратора ввести следующие команды: </br>
 ```
 docker compose exec backend bash
