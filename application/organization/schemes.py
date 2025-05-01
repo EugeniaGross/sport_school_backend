@@ -54,6 +54,7 @@ OrganizationDTO = SQLAlchemyDTO[
         Organization,
         DTOConfig(
             exclude={
+                "id",
                 "phones.0.id",
                 "phones.0.organization_id",
                 "phones.0.organization",

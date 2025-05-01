@@ -17,8 +17,12 @@ from sqladmin.authentication import AuthenticationBackend, login_required
 from starlette.exceptions import HTTPException
 from markupsafe import Markup
 from wtforms import Field, widgets
+from starlette.requests import Request
+from starlette.responses import RedirectResponse
 
 from settings import settings
+from users.depenfiences import users_service
+from users.utils import create_jwt_token, decode_jwt_token
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -35,7 +39,54 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+class AdminAuth(AuthenticationBackend):
+    async def login(self, request: Request) -> bool:
+        form = await request.form()
+        email, password = form["email"], form["password"]
+        try:
+            user = await users_service().authenticate_user(email, password)
+            request.session.update(
+                {"token": create_jwt_token({"id": user.id}, settings.ADMIN_TOKEN_EXPIRE_DAYS)}
+            )
+            return True
+        except Exception as e:
+            return False
+
+    async def logout(self, request: Request) -> bool:
+        request.session.clear()
+        return True
+
+    async def authenticate(self, request: Request) -> bool:
+        token = request.session.get("token")
+        if not token or (decode_token := decode_jwt_token(token)) is None:
+            return False
+        user = await users_service().get_one(decode_token["id"])
+        if user is None:
+            return False
+        return True
+
+
 class SQLAdmin(sqladmin.Admin):
+    
+    @login_required
+    async def index(self, request: Request) -> Response:
+        return await self.templates.TemplateResponse(request, "index.html")
+    
+    async def login(self, request: Request) -> Response:
+        assert self.authentication_backend is not None
+
+        context = {}
+        if request.method == "GET":
+            return await self.templates.TemplateResponse(request, "login.html")
+
+        ok = await self.authentication_backend.login(request)
+        if not ok:
+            context["error"] = "Некорректные данные"
+            return await self.templates.TemplateResponse(
+                request, "login.html", context, status_code=400
+            )
+
+        return RedirectResponse(request.url_for("admin:index"), status_code=302)
 
     async def _handle_form_data(
         self, request: Request, obj: Any = None

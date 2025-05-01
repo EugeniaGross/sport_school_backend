@@ -38,6 +38,7 @@ class OrganizationAdmin(ModelView, model=Organization):
     column_details_list = [Organization.name]
     form_overrides = dict(image=FileField)
     page_size = 50
+    can_delete = False
 
 
 class OrganizationPhoneAdmin(ModelView, model=OrganizationPhone):

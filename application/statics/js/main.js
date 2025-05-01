@@ -1,19 +1,22 @@
-// function handleSubmit(event) {
-//   event.preventDefault();
-//   const form = document.getElementById("form");
-//   console.log(!form.reportValidity())
-//   if (!form.reportValidity()) return;
-//   const formData = new FormData(form);
-//   formData.delete("files")
-//   formData.set(event.target.name, event.target.value)
-//   fetch(form.action, {
-//       method: form.method,
-//       body: formData
-//   }).then(response => {
-//     if (response.ok) {
-//       window.location.href = response.url
-//   }})
-// }
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.location.pathname == '/admin/organization/list'){
+      const tableBody = document.getElementsByTagName('tbody');
+      let actions = document.getElementsByClassName('card-body border-bottom py-3');
+      actions[0].remove()
+      if (tableBody[0].children.length > 0) {
+          let buttons = document.getElementsByClassName('ms-3 d-inline-block');
+          buttons[1].remove()
+      }
+  }
+  if (window.location.pathname.startsWith('/admin/organization/edit/')) {
+    let buttons = document.querySelectorAll("input[type=submit]")
+    buttons[2].remove()
+  }
+  if (window.location.pathname.startsWith('/admin/organization/create')) {
+    let buttons = document.querySelectorAll("input[type=submit]")
+    buttons[2].remove()
+  }
+})
 
 
 // Handle delete modal

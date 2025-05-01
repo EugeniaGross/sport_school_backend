@@ -14,6 +14,7 @@ from organization.models import *
 from types_sports.models import *
 from upcoming_events.models import *
 from vacancies.models import *
+from users.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

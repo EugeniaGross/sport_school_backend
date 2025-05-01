@@ -12,6 +12,11 @@ MYSQL_PORT=3306
 ```
 
 Запуск проекта: docker compose up --build</br>
+Для создания администратора ввести следующие команды: </br>
+```
+docker compose exec backend bash
+python application/commands/create_admin.py
+```
 
 Панель администратора доступна по адресу: http://localhost:8000/admin</br>
 

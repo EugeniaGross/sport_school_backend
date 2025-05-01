@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     MYSQL_PORT: int
     CLIENT_URL: str
     ALLOWED_HOSTS: str
+    SECRET_KEY: str
+    JWT_ALGORITHM: str
+    JWT_SECRET_KEY: str
+    ADMIN_TOKEN_EXPIRE_DAYS: int
 
     @property
     def DB_URL(self):

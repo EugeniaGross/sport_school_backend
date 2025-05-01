@@ -11,7 +11,7 @@ from litestar.config.allowed_hosts import AllowedHostsConfig
 
 from uvicorn.workers import UvicornWorker
 
-from admin_plugin import AdminPlugin
+from admin_plugin import AdminPlugin, AdminAuth
 from database import async_engine
 from athletes.admin import AthletesAdmin
 from athletes.controller import AthletesController
@@ -55,6 +55,8 @@ api_v1_router = Router(
     ],
 )
 
+authentication_backend = AdminAuth(secret_key=settings.SECRET_KEY)
+
 admin = AdminPlugin(
     views=[
         OrganizationAdmin,
@@ -73,6 +75,7 @@ admin = AdminPlugin(
     ],
     engine=async_engine,
     title="Панель администратора",
+    authentication_backend=authentication_backend
 )
 
 app = Litestar(
