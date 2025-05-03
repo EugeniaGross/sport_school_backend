@@ -3,7 +3,6 @@ from typing import Optional
 from litestar import Controller, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from litestar.connection import Request
 from litestar.pagination import OffsetPagination
 
 from news.dependiences import news_service
@@ -38,11 +37,10 @@ class NewsController(Controller):
     @get("/{news_id:int}", return_dto=NewsFullDTO)
     async def get_one_news(
         self,
-        request: Request,
         news_id: int,
         news_service: NewsService,
     ) -> News:
-        data = await news_service.get_one(request, news_id)
+        data = await news_service.get_one(news_id)
         if data is None:
             raise NotFoundException("Not found")
         return data

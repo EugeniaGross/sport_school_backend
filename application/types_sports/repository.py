@@ -35,11 +35,14 @@ class TypeSportMySQLRepository(TypeSportAbstractRepository):
     @staticmethod
     async def get_one(id: int):
         async with async_session() as session:
-            query = select(TypesSports).where(TypesSports.id == id).options(
-                joinedload(TypesSports.uncoming_events),
-                joinedload(TypesSports.coaches),
-                joinedload(TypesSports.athletes),
-                joinedload(TypesSports.news),
+            result = await session.get(
+                TypesSports,
+                id,
+                options=[
+                    joinedload(TypesSports.uncoming_events),
+                    joinedload(TypesSports.coaches),
+                    joinedload(TypesSports.athletes),
+                    joinedload(TypesSports.news),
+                ],
             )
-            result = await session.execute(query)
-            return result.unique().scalars().first()
+            return result

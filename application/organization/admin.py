@@ -81,6 +81,8 @@ class OrganizationSportObjectAdmin(ModelView, model=OrganizationSportObject):
         OrganizationSportObject.start_works: "Время начала работы",
         OrganizationSportObject.end_works: "Время окончания работы",
         OrganizationSportObject.organization: "Организация",
+        OrganizationSportObject.latitude: "Широта",
+        OrganizationSportObject.longitude: "Долгота",
     }
     column_details_list = [
         OrganizationSportObject.name,

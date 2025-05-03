@@ -13,6 +13,15 @@ MYSQL_USER=db_user
 MYSQL_PASSWORD=db_user_password
 MYSQL_HOST=db
 MYSQL_PORT=3306
+
+PRODUCTION_URL = http://localhost:8000
+
+EMAIL_HOST_PASSWORD=xxxxxxxxxxxx
+EMAIL_HOST = xxxxxxxxxxxxx
+EMAIL_PORT = 587
+EMAIL_HOST_USER=xxxxxxxxxxxxx
+
+ADMIN_EMAIL = test@yandex.ru
 ```
 
 Запуск проекта: </br>
@@ -22,7 +31,8 @@ docker compose up --build
 Для создания администратора ввести следующие команды: </br>
 ```
 docker compose exec backend bash
-python application/commands/create_admin.py
+cd applocation/
+litestar create-admin
 ```
 
 Панель администратора доступна по адресу: http://localhost:8000/admin</br>

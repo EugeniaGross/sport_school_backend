@@ -1,7 +1,8 @@
 from typing import Optional
 
-from litestar.connection import Request
 from upcoming_events.repository import UpcomingEventsAbstractRepository
+
+from settings import settings
 
 
 class UpcomingEventsService:
@@ -11,7 +12,6 @@ class UpcomingEventsService:
 
     async def get_with_filter(
         self,
-        request: Request,
         type_sport: Optional[str],
         offset: int,
         limit: int,
@@ -21,13 +21,13 @@ class UpcomingEventsService:
         else:
             data = await self.repo.get_with_filter(type_sport, limit, offset)
         for element in data:
-            element.image = f"{request.base_url}statics/images/{element.image}"
+            element.image = f"{settings.PRODUCTION_URL}{element.image}"
         return data
 
-    async def get_one(self, request: Request, id: int):
+    async def get_one(self, id: int):
         data = await self.repo.get_one(id)
         if data:
-            data.image = f"{request.base_url}statics/images/{data.image}"
+            data.image = f"{settings.PRODUCTION_URL}{data.image}"
         return data
 
     async def get_total_count(self, type_sport: Optional[str]):

@@ -3,7 +3,6 @@ from typing import Optional
 from litestar import Controller, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from litestar.connection import Request
 from litestar.pagination import OffsetPagination
 
 from upcoming_events.dependiences import upcoming_events_service
@@ -17,7 +16,7 @@ from upcoming_events.service import UpcomingEventsService
 
 
 class UpcomingEventsController(Controller):
-    path = "/upcomming_events"
+    path = "/upcoming_events"
     dependencies = {
         "upcoming_events_service": Provide(upcoming_events_service)
     }
@@ -40,13 +39,10 @@ class UpcomingEventsController(Controller):
     @get("/{upcoming_event_id:int}", return_dto=UpcommingEventsFullDTO)
     async def get_one_upcoming_event(
         self,
-        request: Request,
         upcoming_event_id: int,
         upcoming_events_service: UpcomingEventsService,
     ) -> UpcommingEvents:
-        data = await upcoming_events_service.get_one(
-            request, upcoming_event_id
-        )
+        data = await upcoming_events_service.get_one(upcoming_event_id)
         if data is None:
             raise NotFoundException("Not found")
         return data

@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/select2.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/flatpickr.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('admin:statics', path='css/main.css') }}">
-  <link rel="stylesheet" href="{{ "http://127.0.0.1:8000/statics/css/styles.css" }}"></link>
+  <link rel="stylesheet" href="{{ prod_url }}/statics/css/styles.css"></link>
   {% if admin.favicon_url %}
   <link rel="icon" href="{{ admin.favicon_url }}">
   {% endif %}
@@ -32,7 +32,7 @@
   <script type="text/javascript" src="{{ url_for('admin:statics', path='js/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('admin:statics', path='js/select2.full.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('admin:statics', path='js/flatpickr.min.js') }}"></script>
-  <script type="text/javascript" src="{{ "http://127.0.0.1:8000/statics/js/main.js" }}"></script>
+  <script type="text/javascript" src="{{ prod_url }}/statics/js/main.js"></script>
   {% block tail %}
   {% endblock %}
 </body>

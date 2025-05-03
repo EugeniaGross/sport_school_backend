@@ -1,7 +1,6 @@
 from litestar import Controller, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from litestar.connection import Request
 
 from types_sports.dependiences import types_sports_service
 from types_sports.models import TypesSports

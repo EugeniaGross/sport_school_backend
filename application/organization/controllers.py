@@ -1,7 +1,6 @@
 from litestar import Controller, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from litestar.connection import Request
 
 from organization.dependiences import organization_service
 from organization.models import (
@@ -26,10 +25,9 @@ class OrganizationController(Controller):
     @get("/", return_dto=OrganizationDTO)
     async def get_organization(
         self,
-        request: Request,
         organization_service: OrganizationService,
     ) -> Organization:
-        data = await organization_service.get_organization(request)
+        data = await organization_service.get_organization()
         if data is None:
             raise NotFoundException("Not found")
         return data
@@ -48,12 +46,11 @@ class OrganizationController(Controller):
     )
     async def get_one_document_category(
         self,
-        request: Request,
         document_category_id: int,
         organization_service: OrganizationService,
     ) -> DocumentCategory:
         data = await organization_service.get_one_document_category(
-            request, document_category_id
+            document_category_id
         )
         if data is None:
             raise NotFoundException("Not found")
@@ -72,12 +69,11 @@ class OrganizationController(Controller):
     )
     async def get_one_organization_info(
         self,
-        request: Request,
         information_id: int,
         organization_service: OrganizationService,
     ) -> OrganizationInfo:
         data = await organization_service.get_one_organization_info(
-            request, information_id
+            information_id
         )
         if data is None:
             raise NotFoundException("Not found")

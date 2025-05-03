@@ -36,9 +36,6 @@ if TYPE_CHECKING:
     from starlette.middleware import Middleware
 
 
-logger = logging.getLogger(__name__)
-
-
 class AdminAuth(AuthenticationBackend):
     async def login(self, request: Request) -> bool:
         form = await request.form()
@@ -46,10 +43,15 @@ class AdminAuth(AuthenticationBackend):
         try:
             user = await users_service().authenticate_user(email, password)
             request.session.update(
-                {"token": create_jwt_token({"id": user.id}, settings.ADMIN_TOKEN_EXPIRE_DAYS)}
+                {
+                    "token": create_jwt_token(
+                        {"id": user.id}, settings.ADMIN_TOKEN_EXPIRE_DAYS
+                    )
+                }
             )
             return True
         except Exception as e:
+            logging.error(e)
             return False
 
     async def logout(self, request: Request) -> bool:
@@ -69,15 +71,74 @@ class AdminAuth(AuthenticationBackend):
 class SQLAdmin(sqladmin.Admin):
     
     @login_required
+    async def list(self, request: Request) -> Response:
+        """List route to display paginated Model instances."""
+
+        await self._list(request)
+
+        model_view = self._find_model_view(request.path_params["identity"])
+        pagination = await model_view.list(request)
+        pagination.add_pagination_urls(request.url)
+
+        request_page = model_view.validate_page_number(
+            request.query_params.get("page"), 1
+        )
+
+        if request_page > pagination.page:
+            return RedirectResponse(
+                request.url.include_query_params(page=pagination.page), status_code=302
+            )
+
+        context = {
+            "model_view": model_view, 
+            "pagination": pagination, 
+            "prod_url": settings.PRODUCTION_URL
+        }
+        return await self.templates.TemplateResponse(
+            request, model_view.list_template, context
+        )
+
+    @login_required
+    async def details(self, request: Request) -> Response:
+        """Details route."""
+
+        await self._details(request)
+
+        model_view = self._find_model_view(request.path_params["identity"])
+
+        model = await model_view.get_object_for_details(request.path_params["pk"])
+        if not model:
+            raise HTTPException(status_code=404)
+
+        context = {
+            "model_view": model_view,
+            "model": model,
+            "title": model_view.name,
+            "prod_url": settings.PRODUCTION_URL
+        }
+
+        return await self.templates.TemplateResponse(
+            request, model_view.details_template, context
+        )
+
+    @login_required
     async def index(self, request: Request) -> Response:
-        return await self.templates.TemplateResponse(request, "index.html")
-    
+        return await self.templates.TemplateResponse(
+            request, 
+            "index.html", 
+            {"prod_url": settings.PRODUCTION_URL}
+        )
+
     async def login(self, request: Request) -> Response:
         assert self.authentication_backend is not None
 
-        context = {}
+        context = {"prod_url": settings.PRODUCTION_URL}
         if request.method == "GET":
-            return await self.templates.TemplateResponse(request, "login.html")
+            return await self.templates.TemplateResponse(
+                request, 
+                "login.html",
+                context
+            )
 
         ok = await self.authentication_backend.login(request)
         if not ok:
@@ -86,7 +147,9 @@ class SQLAdmin(sqladmin.Admin):
                 request, "login.html", context, status_code=400
             )
 
-        return RedirectResponse(request.url_for("admin:index"), status_code=302)
+        return RedirectResponse(
+            request.url_for("admin:index"), status_code=302
+        )
 
     async def _handle_form_data(
         self, request: Request, obj: Any = None
@@ -122,7 +185,7 @@ class SQLAdmin(sqladmin.Admin):
             "wb",
         ) as f:
             f.write(file.file.read())
-        return file.filename
+        return f"/statics/{type}/{file.filename}"
 
     @login_required
     async def create(self, request: Request) -> Response:
@@ -140,6 +203,7 @@ class SQLAdmin(sqladmin.Admin):
         context = {
             "model_view": model_view,
             "form": form,
+            "prod_url": settings.PRODUCTION_URL
         }
 
         if request.method == "GET":
@@ -166,7 +230,7 @@ class SQLAdmin(sqladmin.Admin):
         try:
             obj = await model_view.insert_model(request, form_data_dict)
         except Exception as e:
-            logger.exception(e)
+            logging.exception(e)
             context["error"] = str(e)
             return await self.templates.TemplateResponse(
                 request, model_view.create_template, context, status_code=400
@@ -199,6 +263,7 @@ class SQLAdmin(sqladmin.Admin):
             "obj": model,
             "model_view": model_view,
             "form": Form(obj=model, data=self._normalize_wtform_data(model)),
+            "prod_url": settings.PRODUCTION_URL
         }
 
         if request.method == "GET":
@@ -234,7 +299,7 @@ class SQLAdmin(sqladmin.Admin):
                     request, pk=request.path_params["pk"], data=form_data_dict
                 )
         except Exception as e:
-            logger.exception(e)
+            logging.error(e)
             context["error"] = str(e)
             return await self.templates.TemplateResponse(
                 request, model_view.edit_template, context, status_code=400
@@ -343,7 +408,9 @@ class FileInputWidget(widgets.FileInput):
             checkbox = Markup()
 
         if field.data:
-            current_value = Markup(f"<p>Текущий файл: {field.data}</p>")
+            current_value = Markup(
+                f"<p>Текущий файл: <a href='{settings.PRODUCTION_URL}{field.data}' target='_blank'>{field.data.split("/")[-1]}</a></p>"
+            )
             field.flags.required = False
             return current_value + checkbox + super().__call__(field, **kwargs)
         else:

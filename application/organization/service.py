@@ -1,6 +1,7 @@
-from litestar.connection import Request
 from organization.repository import OrganizationAbstractRepository
 from organization.models import OrganizationInfo, DocumentCategory
+
+from settings import settings
 
 
 class OrganizationService:
@@ -16,33 +17,29 @@ class OrganizationService:
         data = await self.repo.get_all(DocumentCategory)
         return data
 
-    async def get_one_organization_info(self, request: Request, id: int):
+    async def get_one_organization_info(self, id: int):
         data = await self.repo.get_one(OrganizationInfo, id)
         if data is None:
             return data
         for document in data.documents:
-            document.file = (
-                f"{request.base_url}statics/documents/{document.file}"
-            )
+            document.file = f"{settings.PRODUCTION_URL}{document.file}"
         return data
 
-    async def get_one_document_category(self, request: Request, id: int):
+    async def get_one_document_category(self, id: int):
         data = await self.repo.get_one(DocumentCategory, id)
         if data is None:
             return data
         for document in data.documents:
-            document.file = (
-                f"{request.base_url}statics/documents/{document.file}"
-            )
+            document.file = f"{settings.PRODUCTION_URL}{document.file}"
         return data
 
-    async def get_organization(self, request: Request):
+    async def get_organization(self):
         data = await self.repo.get_organization()
         if data is None:
             return data
-        data.image = f"{request.base_url}statics/images/{data.image}"
+        data.image = f"{settings.PRODUCTION_URL}{data.image}"
         for sport_object in data.sport_objects:
             sport_object.image = (
-                f"{request.base_url}statics/images/{sport_object.image}"
+                f"{settings.PRODUCTION_URL}{sport_object.image}"
             )
         return data

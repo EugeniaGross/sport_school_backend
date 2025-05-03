@@ -1,9 +1,8 @@
 from datetime import time
-import enum
 from typing import Optional
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy import ForeignKey, String, Text, Float
 
 from database import Base
 
@@ -45,6 +44,12 @@ class OrganizationSportObject(Base):
     email: Mapped[Optional[str]] = mapped_column(String(255))
     url: Mapped[Optional[str]] = mapped_column(String(500))
     address: Mapped[str] = mapped_column(String(500))
+    latitude: Mapped[float] = mapped_column(
+        Float(precision=32, decimal_return_scale=None)
+    )
+    longitude: Mapped[float] = mapped_column(
+        Float(precision=32, decimal_return_scale=None)
+    )
 
     organization_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("organization.id", ondelete="CASCADE")

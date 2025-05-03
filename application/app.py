@@ -1,6 +1,7 @@
+import logging
 from pathlib import Path
 
-from litestar import Litestar, Router
+from litestar import Litestar, Router, post, Response
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.contrib.jinja import JinjaTemplateEngine
@@ -8,7 +9,7 @@ from litestar.template.config import TemplateConfig
 from litestar.static_files import create_static_files_router
 from litestar.config.cors import CORSConfig
 from litestar.config.allowed_hosts import AllowedHostsConfig
-
+from litestar.logging import LoggingConfig
 from uvicorn.workers import UvicornWorker
 
 from admin_plugin import AdminPlugin, AdminAuth
@@ -17,6 +18,7 @@ from athletes.admin import AthletesAdmin
 from athletes.controller import AthletesController
 from coaches.admin import CoachesAdmin
 from coaches.controller import CoachesController
+from commands import CLIPlugin
 from news.admin import NewsAdmin, PhotoNewsAdmin
 from news.controller import NewsController
 from organization.admin import (
@@ -30,17 +32,45 @@ from organization.admin import (
 from organization.controllers import OrganizationController
 from types_sports.admin import TypesSportsAdmin
 from types_sports.controller import TypesSportsController
+from schemes import EmailBody
 from upcoming_events.admin import UpcommingEventsAdmin
 from upcoming_events.controller import UpcomingEventsController
+from utils.email import send_email
 from vacancies.admin import VacanciesAdmin
 from vacancies.controller import VacancyController
 from settings import settings
+
+logging_config = LoggingConfig(
+    root={"level": "INFO", "handlers": ["queue_listener"]},
+    formatters={
+        "standard": {
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        }
+    },
+    log_exceptions="always",
+)
+
+logging_config.configure()("passlib").setLevel(logging.ERROR)
+logger = logging_config.configure()()
 
 
 class APIUvicornWorker(UvicornWorker):
     CONFIG_KWARGS = {
         "log_config": "logging.yml",
     }
+
+
+@post("/send_to_email", status_code=200)
+async def send_to_email(data: EmailBody) -> None:
+    try:
+        await send_email(data.name, data.phone, data.message, data.email)
+    except Exception as e:
+        logging.error(e)
+        return Response(
+            content={"detail": "Не удалось отправить сообщение"},
+            status_code=500,
+        )
+
 
 api_v1_router = Router(
     path="/api/v1",
@@ -52,6 +82,7 @@ api_v1_router = Router(
         UpcomingEventsController,
         NewsController,
         VacancyController,
+        send_to_email,
     ],
 )
 
@@ -75,7 +106,7 @@ admin = AdminPlugin(
     ],
     engine=async_engine,
     title="Панель администратора",
-    authentication_backend=authentication_backend
+    authentication_backend=authentication_backend,
 )
 
 app = Litestar(
@@ -89,15 +120,15 @@ app = Litestar(
     ),
     openapi_config=OpenAPIConfig(
         title="Sport School API",
-        description='Документация для сайта спортшколы "Тверь"',
+        description='Документация API для сайта спортшколы "Тверь"',
         version="0.0.1",
         render_plugins=[ScalarRenderPlugin()],
         path="/documentation",
     ),
-    plugins=[admin],
+    plugins=[admin, CLIPlugin()],
     cors_config=CORSConfig(allow_origins=[settings.CLIENT_URL]),
     allowed_hosts=AllowedHostsConfig(
         allowed_hosts=settings.ALLOWED_HOSTS.split(",")
     ),
-    debug=True,
+    logging_config=logging_config,
 )

@@ -3,7 +3,6 @@ from typing import Optional
 from litestar import Controller, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from litestar.connection import Request
 
 from coaches.dependiences import coaches_service
 from coaches.models import Coach
@@ -18,18 +17,17 @@ class CoachesController(Controller):
     @get("/", return_dto=CoachDTO)
     async def get_with_filter_coaches(
         self,
-        request: Request,
         coaches_service: CoachService,
         type_sport: Optional[str] = None,
     ) -> list[Coach]:
-        data = await coaches_service.get_with_filter(request, type_sport)
+        data = await coaches_service.get_with_filter(type_sport)
         return data
 
     @get("/{coach_id:int}", return_dto=CoachDTO)
     async def get_one_coach(
-        self, request: Request, coach_id: int, coaches_service: CoachService
+        self, coach_id: int, coaches_service: CoachService
     ) -> Coach:
-        data = await coaches_service.get_one(request, coach_id)
+        data = await coaches_service.get_one(coach_id)
         if data is None:
             raise NotFoundException("Not found")
         return data

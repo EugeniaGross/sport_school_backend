@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str
     JWT_SECRET_KEY: str
     ADMIN_TOKEN_EXPIRE_DAYS: int
+    LITESTAR_WARN_IMPLICIT_SYNC_TO_THREAD: int
+    PRODUCTION_URL: str
+    EMAIL_HOST_PASSWORD: str
+    EMAIL_HOST: str
+    EMAIL_PORT: str
+    EMAIL_HOST_USER: str
+    ADMIN_EMAIL: str
 
     @property
     def DB_URL(self):
