@@ -1,6 +1,8 @@
+import logging
 from pathlib import Path
 import os
 
+from litestar.logging import LoggingConfig
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -34,8 +36,8 @@ class Settings(BaseSettings):
     @property
     def DB_URL(self):
         return (
-            f"mysql+aiomysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_HOST}:"
-            f"{self.MYSQL_PORT}/{self.MYSQL_DATABASE}"
+            f"mysql+aiomysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@"
+            f"{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DATABASE}"
         )
 
     @property
@@ -44,3 +46,14 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+logging_config = LoggingConfig(
+    root={"level": "INFO", "handlers": ["queue_listener"]},
+    formatters={
+        "standard": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"}
+    },
+    log_exceptions="always",
+)
+
+logging_config.configure()("passlib").setLevel(logging.ERROR)
+logger = logging_config.configure()()

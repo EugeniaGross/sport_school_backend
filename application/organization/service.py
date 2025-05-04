@@ -39,7 +39,5 @@ class OrganizationService:
             return data
         data.image = f"{settings.PRODUCTION_URL}{data.image}"
         for sport_object in data.sport_objects:
-            sport_object.image = (
-                f"{settings.PRODUCTION_URL}{sport_object.image}"
-            )
+            sport_object.image = f"{settings.PRODUCTION_URL}{sport_object.image}"
         return data

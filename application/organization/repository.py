@@ -37,9 +37,7 @@ class OrganizationMySQLRepository(OrganizationAbstractRepository):
             return result.scalars().all()
 
     @staticmethod
-    async def get_one(
-        model: Union[OrganizationInfo, DocumentCategory], id: int
-    ):
+    async def get_one(model: Union[OrganizationInfo, DocumentCategory], id: int):
         async with async_session() as session:
             result = await session.get(
                 model, id, options=[joinedload(model.documents)]

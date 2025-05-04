@@ -64,17 +64,13 @@ class OrganizationController(Controller):
         data = await organization_service.get_all_organization_info()
         return data
 
-    @get(
-        "/information/{information_id:int}", return_dto=OrganizationInfoFullDTO
-    )
+    @get("/information/{information_id:int}", return_dto=OrganizationInfoFullDTO)
     async def get_one_organization_info(
         self,
         information_id: int,
         organization_service: OrganizationService,
     ) -> OrganizationInfo:
-        data = await organization_service.get_one_organization_info(
-            information_id
-        )
+        data = await organization_service.get_one_organization_info(information_id)
         if data is None:
             raise NotFoundException("Not found")
         return data

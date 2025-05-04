@@ -46,9 +46,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column(
             "name",
-            sa.Enum(
-                "telegram", "vk", "whats_app", "rutube", name="socialnetwork"
-            ),
+            sa.Enum("telegram", "vk", "whats_app", "rutube", name="socialnetwork"),
             nullable=False,
         ),
         sa.Column("link", sa.String(length=255), nullable=False),

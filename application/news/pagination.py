@@ -16,11 +16,7 @@ class NewsOffsetPaginator(AbstractAsyncOffsetPaginator[News]):
         self.type_sport = type_sport
 
     async def get_total(self) -> int:
-        return cast(
-            "int", await self.news_service.get_total_count(self.type_sport)
-        )
+        return cast("int", await self.news_service.get_total_count(self.type_sport))
 
     async def get_items(self, limit: int, offset: int) -> list[News]:
-        return await self.news_service.get_with_filter(
-            self.type_sport, offset, limit
-        )
+        return await self.news_service.get_with_filter(self.type_sport, offset, limit)

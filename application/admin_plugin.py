@@ -1,5 +1,4 @@
 from __future__ import annotations
-import logging
 from typing import TYPE_CHECKING, Any
 import os
 import io
@@ -20,7 +19,7 @@ from wtforms import Field, widgets
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
-from settings import settings
+from settings import settings, logger
 from users.depenfiences import users_service
 from users.utils import create_jwt_token, decode_jwt_token
 
@@ -51,7 +50,7 @@ class AdminAuth(AuthenticationBackend):
             )
             return True
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             return False
 
     async def logout(self, request: Request) -> bool:
@@ -69,7 +68,7 @@ class AdminAuth(AuthenticationBackend):
 
 
 class SQLAdmin(sqladmin.Admin):
-    
+
     @login_required
     async def list(self, request: Request) -> Response:
         """List route to display paginated Model instances."""
@@ -86,13 +85,14 @@ class SQLAdmin(sqladmin.Admin):
 
         if request_page > pagination.page:
             return RedirectResponse(
-                request.url.include_query_params(page=pagination.page), status_code=302
+                request.url.include_query_params(page=pagination.page),
+                status_code=302,
             )
 
         context = {
-            "model_view": model_view, 
-            "pagination": pagination, 
-            "prod_url": settings.PRODUCTION_URL
+            "model_view": model_view,
+            "pagination": pagination,
+            "prod_url": settings.PRODUCTION_URL,
         }
         return await self.templates.TemplateResponse(
             request, model_view.list_template, context
@@ -114,7 +114,7 @@ class SQLAdmin(sqladmin.Admin):
             "model_view": model_view,
             "model": model,
             "title": model_view.name,
-            "prod_url": settings.PRODUCTION_URL
+            "prod_url": settings.PRODUCTION_URL,
         }
 
         return await self.templates.TemplateResponse(
@@ -124,9 +124,7 @@ class SQLAdmin(sqladmin.Admin):
     @login_required
     async def index(self, request: Request) -> Response:
         return await self.templates.TemplateResponse(
-            request, 
-            "index.html", 
-            {"prod_url": settings.PRODUCTION_URL}
+            request, "index.html", {"prod_url": settings.PRODUCTION_URL}
         )
 
     async def login(self, request: Request) -> Response:
@@ -135,9 +133,7 @@ class SQLAdmin(sqladmin.Admin):
         context = {"prod_url": settings.PRODUCTION_URL}
         if request.method == "GET":
             return await self.templates.TemplateResponse(
-                request, 
-                "login.html",
-                context
+                request, "login.html", context
             )
 
         ok = await self.authentication_backend.login(request)
@@ -147,13 +143,9 @@ class SQLAdmin(sqladmin.Admin):
                 request, "login.html", context, status_code=400
             )
 
-        return RedirectResponse(
-            request.url_for("admin:index"), status_code=302
-        )
+        return RedirectResponse(request.url_for("admin:index"), status_code=302)
 
-    async def _handle_form_data(
-        self, request: Request, obj: Any = None
-    ) -> FormData:
+    async def _handle_form_data(self, request: Request, obj: Any = None) -> FormData:
         """
         Handle form data and modify in case of UploadFile.
         This is needed since in edit page
@@ -179,9 +171,7 @@ class SQLAdmin(sqladmin.Admin):
 
     async def save_file(self, file: UploadFile, type: str):
         with open(
-            os.path.join(
-                settings.BASE_DIR, "statics", f"{type}", file.filename
-            ),
+            os.path.join(settings.BASE_DIR, "statics", f"{type}", file.filename),
             "wb",
         ) as f:
             f.write(file.file.read())
@@ -203,7 +193,7 @@ class SQLAdmin(sqladmin.Admin):
         context = {
             "model_view": model_view,
             "form": form,
-            "prod_url": settings.PRODUCTION_URL
+            "prod_url": settings.PRODUCTION_URL,
         }
 
         if request.method == "GET":
@@ -216,9 +206,7 @@ class SQLAdmin(sqladmin.Admin):
                 request, model_view.create_template, context, status_code=400
             )
 
-        form_data_dict = self._denormalize_wtform_data(
-            form.data, model_view.model
-        )
+        form_data_dict = self._denormalize_wtform_data(form.data, model_view.model)
         if "image" in form_data_dict:
             image = form_data_dict["image"]
             file_name = await self.save_file(image, "images")
@@ -230,7 +218,7 @@ class SQLAdmin(sqladmin.Admin):
         try:
             obj = await model_view.insert_model(request, form_data_dict)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
             context["error"] = str(e)
             return await self.templates.TemplateResponse(
                 request, model_view.create_template, context, status_code=400
@@ -263,7 +251,7 @@ class SQLAdmin(sqladmin.Admin):
             "obj": model,
             "model_view": model_view,
             "form": Form(obj=model, data=self._normalize_wtform_data(model)),
-            "prod_url": settings.PRODUCTION_URL
+            "prod_url": settings.PRODUCTION_URL,
         }
 
         if request.method == "GET":
@@ -299,7 +287,7 @@ class SQLAdmin(sqladmin.Admin):
                     request, pk=request.path_params["pk"], data=form_data_dict
                 )
         except Exception as e:
-            logging.error(e)
+            logger.error(e)
             context["error"] = str(e)
             return await self.templates.TemplateResponse(
                 request, model_view.edit_template, context, status_code=400
@@ -329,9 +317,7 @@ class SQLAdmin(sqladmin.Admin):
             form.get("save") == "Сохранить как новый объект"
             and model_view.save_as_continue
         ):
-            return request.url_for(
-                "admin:edit", identity=identity, pk=identifier
-            )
+            return request.url_for("admin:edit", identity=identity, pk=identifier)
         return request.url_for("admin:create", identity=identity)
 
 
@@ -358,7 +344,8 @@ class AdminPlugin(SQLAdminPlugin):
             base_url: The base URL for the admin app.
             title: The title of the admin app.
             logo_url: The URL of the logo to display in the admin app.
-            templates_dir: The directory containing the Jinja2 templates for the admin app.
+            templates_dir: The directory containing the Jinja2 templates
+            for the admin app.
             middlewares: A sequence of Starlette middlewares to add to the admin app.
             authentication_backend: An authentication backend to use for the admin app.
         """
@@ -378,7 +365,9 @@ class AdminPlugin(SQLAdminPlugin):
             if value is not Empty
         }
         self.starlette_app = Starlette()
-        self.admin = SQLAdmin(app=self.starlette_app, **admin_kwargs)  # type: ignore[arg-type]
+        self.admin = SQLAdmin(
+            app=self.starlette_app, **admin_kwargs
+        )  # type: ignore[arg-type]
         self.starlette_app.add_middleware(
             PathFixMiddleware, base_url=self.admin.base_url
         )
@@ -399,7 +388,8 @@ class FileInputWidget(widgets.FileInput):
                 f'<label class="form-check-label" for="{checkbox_id}">Clear</label>'
             )
             checkbox_input = Markup(
-                f'<input class="form-check-input" type="checkbox" id="{checkbox_id}" name="{checkbox_id}">'  # noqa: E501
+                f'<input class="form-check-input" type="checkbox" id="{checkbox_id}" '
+                f'name="{checkbox_id}">'  # noqa: E501
             )
             checkbox = Markup(
                 f'<div class="form-check">{checkbox_input}{checkbox_label}</div>'
@@ -409,7 +399,8 @@ class FileInputWidget(widgets.FileInput):
 
         if field.data:
             current_value = Markup(
-                f"<p>Текущий файл: <a href='{settings.PRODUCTION_URL}{field.data}' target='_blank'>{field.data.split("/")[-1]}</a></p>"
+                f"<p>Текущий файл: <a href='{settings.PRODUCTION_URL}{field.data}' "
+                f"target='_blank'>{field.data.split("/")[-1]}</a></p>"
             )
             field.flags.required = False
             return current_value + checkbox + super().__call__(field, **kwargs)

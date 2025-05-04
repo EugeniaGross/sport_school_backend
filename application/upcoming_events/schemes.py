@@ -8,9 +8,7 @@ from upcoming_events.models import UpcommingEvents
 UpcommingEventsShortDTO = SQLAlchemyDTO[
     Annotated[
         UpcommingEvents,
-        DTOConfig(
-            exclude={"description", "type_sport_id", "type_sport.description"}
-        ),
+        DTOConfig(exclude={"description", "type_sport_id", "type_sport.description"}),
     ]
 ]
 

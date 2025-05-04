@@ -17,9 +17,7 @@ from upcoming_events.service import UpcomingEventsService
 
 class UpcomingEventsController(Controller):
     path = "/upcoming_events"
-    dependencies = {
-        "upcoming_events_service": Provide(upcoming_events_service)
-    }
+    dependencies = {"upcoming_events_service": Provide(upcoming_events_service)}
 
     @get(
         "/",

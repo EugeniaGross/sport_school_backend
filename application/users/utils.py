@@ -19,9 +19,7 @@ def verify_password(plain_password, hashed_password):
 def create_jwt_token(data: dict, token_expire: int):
     expire = datetime.now(timezone.utc) + timedelta(days=token_expire)
     data.update({"exp": expire})
-    token = jwt.encode(
-        data, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
-    )
+    token = jwt.encode(data, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
     return token
 
 

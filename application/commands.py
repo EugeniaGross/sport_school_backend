@@ -5,6 +5,7 @@ import rich
 from litestar.plugins import CLIPluginProtocol
 from click import Group
 
+from settings import logger
 from users.depenfiences import users_service
 
 
@@ -22,5 +23,5 @@ class CLIPlugin(CLIPluginProtocol):
                 asyncio.run(users_service().add_one(email, password))
                 rich.print(f"[green]Администратор {email} успешно создан")
             except Exception as e:
-                print(e)
+                logger.error(e)
                 rich.print("[red]Введите корректные данные")

@@ -10,9 +10,7 @@ class UserService:
 
     async def add_one(self, email, password):
         hash_password = create_hash_password(password)
-        await self.repo.add_one(
-            {"email": email, "hash_password": hash_password}
-        )
+        await self.repo.add_one({"email": email, "hash_password": hash_password})
 
     async def get_one(self, id: int):
         return await self.repo.get_one(id)

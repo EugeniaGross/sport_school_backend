@@ -3,7 +3,6 @@ from typing import Optional
 from litestar import Controller, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from litestar.connection import Request
 
 from athletes.dependiences import athletes_service
 from athletes.models import Athlet

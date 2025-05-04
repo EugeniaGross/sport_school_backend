@@ -21,7 +21,5 @@ class TypeSportsService:
         for news in data.news:
             news.image = f"{settings.PRODUCTION_URL}{news.image}"
         for uncoming_event in data.uncoming_events:
-            uncoming_event.image = (
-                f"{settings.PRODUCTION_URL}{uncoming_event.image}"
-            )
+            uncoming_event.image = f"{settings.PRODUCTION_URL}{uncoming_event.image}"
         return data

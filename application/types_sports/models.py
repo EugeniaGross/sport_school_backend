@@ -23,9 +23,7 @@ class TypesSports(Base):
         back_populates="type_sport"
     )
     coaches: Mapped[list["Coach"]] = relationship(back_populates="type_sport")
-    athletes: Mapped[list["Athlet"]] = relationship(
-        back_populates="type_sport"
-    )
+    athletes: Mapped[list["Athlet"]] = relationship(back_populates="type_sport")
     news: Mapped[list["News"]] = relationship(back_populates="type_sport")
 
     def __repr__(self):

@@ -10,9 +10,7 @@ from organization.models import (
 )
 
 OrganizationInfoShortDTO = SQLAlchemyDTO[
-    Annotated[
-        OrganizationInfo, DTOConfig(exclude={"description", "documents"})
-    ]
+    Annotated[OrganizationInfo, DTOConfig(exclude={"description", "documents"})]
 ]
 
 DocumentCategoryShortDTO = SQLAlchemyDTO[

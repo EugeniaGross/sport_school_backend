@@ -72,9 +72,7 @@ class UpcomingEventsMySQLRepository(UpcomingEventsAbstractRepository):
     @staticmethod
     async def get_total_count():
         async with async_session() as session:
-            count = await session.scalar(
-                select(func.count(UpcommingEvents.id))
-            )
+            count = await session.scalar(select(func.count(UpcommingEvents.id)))
             return count
 
     @staticmethod

@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 from litestar import Litestar, Router, post, Response
@@ -9,7 +8,6 @@ from litestar.template.config import TemplateConfig
 from litestar.static_files import create_static_files_router
 from litestar.config.cors import CORSConfig
 from litestar.config.allowed_hosts import AllowedHostsConfig
-from litestar.logging import LoggingConfig
 from uvicorn.workers import UvicornWorker
 
 from admin_plugin import AdminPlugin, AdminAuth
@@ -38,20 +36,7 @@ from upcoming_events.controller import UpcomingEventsController
 from utils.email import send_email
 from vacancies.admin import VacanciesAdmin
 from vacancies.controller import VacancyController
-from settings import settings
-
-logging_config = LoggingConfig(
-    root={"level": "INFO", "handlers": ["queue_listener"]},
-    formatters={
-        "standard": {
-            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        }
-    },
-    log_exceptions="always",
-)
-
-logging_config.configure()("passlib").setLevel(logging.ERROR)
-logger = logging_config.configure()()
+from settings import settings, logging_config, logger
 
 
 class APIUvicornWorker(UvicornWorker):
@@ -65,7 +50,7 @@ async def send_to_email(data: EmailBody) -> None:
     try:
         await send_email(data.name, data.phone, data.message, data.email)
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         return Response(
             content={"detail": "Не удалось отправить сообщение"},
             status_code=500,
@@ -86,8 +71,6 @@ api_v1_router = Router(
     ],
 )
 
-authentication_backend = AdminAuth(secret_key=settings.SECRET_KEY)
-
 admin = AdminPlugin(
     views=[
         OrganizationAdmin,
@@ -106,7 +89,7 @@ admin = AdminPlugin(
     ],
     engine=async_engine,
     title="Панель администратора",
-    authentication_backend=authentication_backend,
+    authentication_backend=AdminAuth(secret_key=settings.SECRET_KEY),
 )
 
 app = Litestar(
@@ -127,8 +110,6 @@ app = Litestar(
     ),
     plugins=[admin, CLIPlugin()],
     cors_config=CORSConfig(allow_origins=[settings.CLIENT_URL]),
-    allowed_hosts=AllowedHostsConfig(
-        allowed_hosts=settings.ALLOWED_HOSTS.split(",")
-    ),
+    allowed_hosts=AllowedHostsConfig(allowed_hosts=settings.ALLOWED_HOSTS.split(",")),
     logging_config=logging_config,
 )
