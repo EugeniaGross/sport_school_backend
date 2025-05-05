@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, desc
 from sqlalchemy.orm import joinedload
 
 from news.models import News
@@ -40,6 +40,7 @@ class NewsMySQLRepository(NewsAbstractRepository):
                 .options(joinedload(News.type_sport))
                 .offset(offset)
                 .limit(limit)
+                .order_by(desc(News.date))
             )
             result = await session.execute(query)
             return result.scalars().all()
@@ -48,11 +49,10 @@ class NewsMySQLRepository(NewsAbstractRepository):
     async def get_with_filter(type_sports: str, limit: int, offset: int):
         async with async_session() as session:
             query = (
-                (
-                    select(News)
-                    .filter(News.type_sport.has(name=type_sports))
-                    .options(joinedload(News.type_sport))
-                )
+                select(News)
+                .filter(News.type_sport.has(name=type_sports))
+                .options(joinedload(News.type_sport))
+                .order_by(desc(News.date))
                 .offset(offset)
                 .limit(limit)
             )
