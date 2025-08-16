@@ -31,7 +31,7 @@ docker compose up --build
 Для создания администратора ввести следующие команды: </br>
 ```
 docker compose exec backend bash
-cd applocation/
+cd application/
 litestar create-admin
 ```
 
