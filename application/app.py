@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from litestar import Litestar, Router, post, Response, get, Request
+from litestar import Litestar, Router, post, Response, get
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.contrib.jinja import JinjaTemplateEngine
@@ -8,8 +8,7 @@ from litestar.template.config import TemplateConfig
 from litestar.static_files import create_static_files_router
 from litestar.config.cors import CORSConfig
 from litestar.config.allowed_hosts import AllowedHostsConfig
-
-# from uvicorn.workers import UvicornWorker
+from uvicorn.workers import UvicornWorker
 
 from admin_plugin import AdminPlugin, AdminAuth
 from database import async_engine
@@ -40,10 +39,10 @@ from vacancies.controller import VacancyController
 from settings import settings, logging_config, logger
 
 
-# class APIUvicornWorker(UvicornWorker):
-#     CONFIG_KWARGS = {
-#         "log_config": "logging.yml",
-#     }
+class APIUvicornWorker(UvicornWorker):
+    CONFIG_KWARGS = {
+        "log_config": "logging.yml",
+    }
 
 
 @post("/send_to_email", status_code=200)
