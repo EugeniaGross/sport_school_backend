@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from litestar import Litestar, Router, post, Response
+from litestar import Litestar, Router, post, Response, get, Request
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.contrib.jinja import JinjaTemplateEngine
@@ -8,7 +8,8 @@ from litestar.template.config import TemplateConfig
 from litestar.static_files import create_static_files_router
 from litestar.config.cors import CORSConfig
 from litestar.config.allowed_hosts import AllowedHostsConfig
-from uvicorn.workers import UvicornWorker
+
+# from uvicorn.workers import UvicornWorker
 
 from admin_plugin import AdminPlugin, AdminAuth
 from database import async_engine
@@ -39,10 +40,10 @@ from vacancies.controller import VacancyController
 from settings import settings, logging_config, logger
 
 
-class APIUvicornWorker(UvicornWorker):
-    CONFIG_KWARGS = {
-        "log_config": "logging.yml",
-    }
+# class APIUvicornWorker(UvicornWorker):
+#     CONFIG_KWARGS = {
+#         "log_config": "logging.yml",
+#     }
 
 
 @post("/send_to_email", status_code=200)
@@ -56,6 +57,50 @@ async def send_to_email(data: EmailBody) -> None:
             status_code=500,
         )
 
+
+@get("/robots.txt", status_code=200)
+async def robots_txt() -> Response:
+    content = (
+        "User-agent: *\nDisallow: /admin/*\n\nSitemap: "
+        f"{settings.PRODUCTION_URL}/sitemap.xml".strip()
+    )
+    return Response(content=content, media_type="text/plain")
+
+
+@get("/sitemap.xml", status_code=200)
+async def sitemap() -> Response:
+    static_urls = [
+        ("/", "weekly"),
+        ("/news", "weekly"),
+        ("/schedule", "yearly"),
+        ("/about", "yearly"),
+        ("/contacts", "newer"),
+        ("/events", "weekly"),
+        ("/sports", "yearly"),
+        ("/organization-info", "yearly"),
+        ("/documents", "yearly"),
+        ("/sports-object", "yearly"),
+        ("/athletes", "yearly"),
+        ("/vacancies", "weekly"),
+    ]
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_content += (
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+        'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+    )
+
+    for url, change in static_urls:
+        text = f"<changefreq>{change}</changefreq>"
+        xml_content += (
+            f"  <url><loc>{settings.PRODUCTION_URL}{url}</loc>{text}</url>\n"
+        )
+
+    xml_content += "</urlset>"
+
+    return Response(content=xml_content, media_type="application/xml")
+
+
+meta_docs_router = Router(path="/", route_handlers=[robots_txt, sitemap])
 
 api_v1_router = Router(
     path="/api/v1",
@@ -96,6 +141,7 @@ app = Litestar(
     route_handlers=[
         create_static_files_router(path="/statics", directories=["statics"]),
         api_v1_router,
+        meta_docs_router,
     ],
     template_config=TemplateConfig(
         directory=Path(__file__).parent / "templates",
