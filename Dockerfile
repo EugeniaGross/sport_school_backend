@@ -2,7 +2,7 @@ FROM python:3.12
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-RUN groupadd app-group && useradd -G app-group app-user
+RUN groupadd app-group && useradd -m -G app-group app-user
 COPY . .
 RUN chown -R app-user:app-group /app && \
     chmod 640 /app/.env
