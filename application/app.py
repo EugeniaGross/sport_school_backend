@@ -154,7 +154,7 @@ app = Litestar(
         path="/documentation",
     ),
     plugins=[admin, CLIPlugin()],
-    cors_config=CORSConfig(allow_origins=[settings.CLIENT_URL.split(",")]),
+    cors_config=CORSConfig(allow_origins=settings.CLIENT_URL.split(",")),
     allowed_hosts=AllowedHostsConfig(allowed_hosts=settings.ALLOWED_HOSTS.split(",")),
     logging_config=logging_config,
 )
