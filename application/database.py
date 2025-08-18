@@ -8,9 +8,7 @@ from sqlalchemy.ext.asyncio import (
 from settings import settings
 
 async_engine = create_async_engine(
-    settings.DB_URL,
-    echo=True,
-    future=True,
+    settings.DB_URL, echo=True, future=True, pool_recycle=3600
 )
 
 async_session = async_sessionmaker(
