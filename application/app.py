@@ -40,9 +40,7 @@ from settings import settings, logging_config, logger
 
 
 class APIUvicornWorker(UvicornWorker):
-    CONFIG_KWARGS = {
-        "log_config": "logging.yml",
-    }
+    CONFIG_KWARGS = {"log_config": "logging.yml", "limit_max_request_size": 104857600}
 
 
 @post("/send_to_email", status_code=200)
