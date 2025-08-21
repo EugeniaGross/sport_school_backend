@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Union
 
-from sqlalchemy import select
+from sqlalchemy import select, asc
 from sqlalchemy.orm import joinedload
 
 from organization.models import (
@@ -32,7 +32,7 @@ class OrganizationMySQLRepository(OrganizationAbstractRepository):
     @staticmethod
     async def get_all(model: Union[OrganizationInfo, DocumentCategory]):
         async with async_session() as session:
-            query = select(model)
+            query = select(model).order_by(asc(model.order))
             result = await session.execute(query)
             return result.scalars().all()
 

@@ -31,6 +31,7 @@ class NewsService:
         data.image = f"{settings.PRODUCTION_URL}{data.image}"
         for photo in data.photos:
             photo.image = f"{settings.PRODUCTION_URL}{photo.image}"
+        data.photos = sorted(data.photos, key=lambda x: x.order)
         return data
 
     async def get_total_count(self, type_sport: Optional[str]):

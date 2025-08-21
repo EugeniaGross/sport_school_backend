@@ -3,6 +3,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, String, Text, Float
+from sqlalchemy.orm import validates
 
 from database import Base
 
@@ -11,10 +12,18 @@ class Organization(Base):
     __tablename__ = "organization"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    logo: Mapped[str] = mapped_column(String(500))
     name: Mapped[str] = mapped_column(String(255))
     image: Mapped[str] = mapped_column(String(500))
     email: Mapped[str] = mapped_column(String(255))
     address: Mapped[str] = mapped_column(String(500))
+    monday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    tuesday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    wednesday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    thursday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    friday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    saturday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    sunday_hours: Mapped[Optional[str]] = mapped_column(String(100))
     telegram_link: Mapped[Optional[str]] = mapped_column(String(100))
     vk_link: Mapped[Optional[str]] = mapped_column(String(100))
     whats_app_link: Mapped[Optional[str]] = mapped_column(String(100))
@@ -38,8 +47,13 @@ class OrganizationSportObject(Base):
     name: Mapped[str] = mapped_column(String(500))
     description: Mapped[Optional[str]] = mapped_column(Text())
     image: Mapped[str] = mapped_column(String(500))
-    start_works: Mapped[time]
-    end_works: Mapped[time]
+    monday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    tuesday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    wednesday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    thursday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    friday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    saturday_hours: Mapped[Optional[str]] = mapped_column(String(100))
+    sunday_hours: Mapped[Optional[str]] = mapped_column(String(100))
     phone: Mapped[Optional[str]] = mapped_column(String(100))
     email: Mapped[Optional[str]] = mapped_column(String(255))
     url: Mapped[Optional[str]] = mapped_column(String(500))
@@ -66,6 +80,7 @@ class OrganizationSportObject(Base):
 class OrganizationPhone(Base):
     __tablename__ = "organization_phones"
     id: Mapped[int] = mapped_column(primary_key=True)
+    division: Mapped[Optional[str]] = mapped_column(String(255))
     phone: Mapped[str] = mapped_column(String(100))
 
     organization_id: Mapped[Optional[int]] = mapped_column(
@@ -86,10 +101,18 @@ class OrganizationInfo(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     category: Mapped[str] = mapped_column(String(1000))
     description: Mapped[Optional[str]] = mapped_column(Text())
+    order: Mapped[int]
+    url: Mapped[Optional[str]] = mapped_column(String(255))
 
     documents: Mapped[list["OrganizationDocument"]] = relationship(
         back_populates="organization_info"
     )
+
+    @validates("order")
+    def validate_order(self, key, value):
+        if value <= 0:
+            raise ValueError("Order must be greater than 0")
+        return value
 
     def __repr__(self):
         return f"{self.category}"
@@ -100,10 +123,17 @@ class DocumentCategory(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(500))
+    order: Mapped[int]
 
     documents: Mapped[list["OrganizationDocument"]] = relationship(
         back_populates="category"
     )
+
+    @validates("order")
+    def validate_order(self, key, value):
+        if value <= 0:
+            raise ValueError("Order must be greater than 0")
+        return value
 
     def __repr__(self):
         return f"{self.name}"

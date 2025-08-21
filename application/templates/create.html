@@ -59,11 +59,50 @@
 </script>
 <script>
   const editor = Jodit.make('#description', {
+    uploader: {
+      url: '/upload',
+      insertImageAsBase64URI: false,
+      imagesExtensions: ['jpg', 'png', 'jpeg', 'gif'],
+    },
+    image: {
+      dialog: {
+        tabs: ['upload', 'url'], 
+      },
+      edit: false, 
+      resize: false, 
+      resizeUseRatio: false,
+      selectImageAfterInsert: false,
+      openOnDblClick: false,
+    },
+    showImagePopup: true,
+    imageDefaultWidth: 300,
+    textIcons: false,
+    defaultStyle: {
+      color: '#000000',
+    },
+    video: {
+      defaultWidth: 560,
+      defaultHeight: 315,
+      parseUrlToVideoEmbed: (url, size) => {
+        if (/https:\/\/[a-z0-9]+\.[a-z]+/.test(url)) {
+          return `<iframe width="${size.width}" height="${size.height}" src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        }
+        return Jodit.modules.Helpers.convertMediaUrlToVideoEmbed(url, size);
+      }
+    },
+    controls: {
+      video: {
+        tooltip: 'Insert video'
+      }
+    },
     buttons: [
       'paragraph', 
       'bold', 
       'italic', 
-      'underline',  
+      'underline',
+      'fontsize',         
+      'brush',             
+      'lineHeight',
       '|', 
       'ul', 
       'ol', 
@@ -73,8 +112,11 @@
       '|', 
       'table', 
       'link', 
+      'image',
+      'video',
       '|', 
-      'fullsize'
+      'fullsize',
+      'source'
     ],
     placeholder: ""
   });

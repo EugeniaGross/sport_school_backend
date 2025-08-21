@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Text
@@ -17,7 +17,7 @@ class TypesSports(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
-    description: Mapped[str] = mapped_column(Text())
+    description: Mapped[Optional[str]] = mapped_column(Text())
 
     uncoming_events: Mapped[list["UpcommingEvents"]] = relationship(
         back_populates="type_sport"

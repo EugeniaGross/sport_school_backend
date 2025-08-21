@@ -1,6 +1,11 @@
 from pathlib import Path
+import os
+import uuid
 
-from litestar import Litestar, Router, post, Response, get
+from litestar import Litestar, Router, post, Response, get, Request
+from litestar.di import Provide
+from litestar.params import Body
+from litestar.datastructures import UploadFile
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.plugins import ScalarRenderPlugin
 from litestar.contrib.jinja import JinjaTemplateEngine
@@ -8,6 +13,7 @@ from litestar.template.config import TemplateConfig
 from litestar.static_files import create_static_files_router
 from litestar.config.cors import CORSConfig
 from litestar.config.allowed_hosts import AllowedHostsConfig
+from litestar.exceptions import NotAuthorizedException
 from uvicorn.workers import UvicornWorker
 
 from admin_plugin import AdminPlugin, AdminAuth
@@ -33,14 +39,59 @@ from types_sports.controller import TypesSportsController
 from schemes import EmailBody
 from upcoming_events.admin import UpcommingEventsAdmin
 from upcoming_events.controller import UpcomingEventsController
+from users.depenfiences import users_service
+from users.service import UserService
 from utils.email import send_email
 from vacancies.admin import VacanciesAdmin
 from vacancies.controller import VacancyController
 from settings import settings, logging_config, logger
+from users.utils import decode_jwt_token
 
 
 class APIUvicornWorker(UvicornWorker):
     CONFIG_KWARGS = {"log_config": "logging.yml"}
+
+
+@post(
+    "/upload", status_code=200, dependencies={"user_service": Provide(users_service)}
+)
+async def upload(request: Request, user_service: UserService) -> dict:
+    token = request.cookies.get("token")
+    if not token or (decode_token := decode_jwt_token(token)) is None:
+        raise NotAuthorizedException(detail="Not Authorized")
+    user = await user_service.get_one(decode_token["id"])
+    if user is None:
+        raise NotAuthorizedException(detail="Not Authorized")
+    form = await request.form()
+    files_urls = []
+    files = [
+        v
+        for k, v in form.items()
+        if k.startswith("files[") and isinstance(v, UploadFile)
+    ]
+    for file in files:
+        ext = file.filename.split(".")[-1]
+        name = f"{uuid.uuid4().hex}.{ext}"
+        file_path = f"/statics/images/{name}"
+        with open(
+            os.path.join(settings.BASE_DIR, "statics", "images", name), "wb"
+        ) as f:
+            contents = await file.read()
+            f.write(contents)
+        files_urls.append(file_path)
+    base_url = settings.PRODUCTION_URL
+    data = {
+        "success": True,
+        "files": files_urls,
+        "baseurl": base_url,
+        "message": "File uploaded successfully",
+        "data": {
+            "files": files_urls,
+            "baseurl": base_url,
+            "isImages": [True] * len(files_urls),
+        },
+    }
+    return data
 
 
 @post("/send_to_email", status_code=200)
@@ -98,6 +149,7 @@ async def sitemap() -> Response:
 
 
 meta_docs_router = Router(path="/", route_handlers=[robots_txt, sitemap])
+upload_router = Router(path="/", route_handlers=[upload])
 
 api_v1_router = Router(
     path="/api/v1",
@@ -139,6 +191,7 @@ app = Litestar(
         create_static_files_router(path="/statics", directories=["statics"]),
         api_v1_router,
         meta_docs_router,
+        upload_router,
     ],
     template_config=TemplateConfig(
         directory=Path(__file__).parent / "templates",

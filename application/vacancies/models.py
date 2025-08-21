@@ -10,7 +10,7 @@ class Vacancy(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
-    description: Mapped[str] = mapped_column(Text())
+    description: Mapped[Optional[str]] = mapped_column(Text())
     email: Mapped[Optional[str]] = mapped_column(String(100))
     phone: Mapped[Optional[str]] = mapped_column(String(100))
 

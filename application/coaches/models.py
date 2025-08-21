@@ -15,7 +15,7 @@ class Coach(Base):
     first_name: Mapped[str] = mapped_column(String(100))
     last_name: Mapped[str] = mapped_column(String(100))
     middle_name: Mapped[Optional[str]] = mapped_column(String(100))
-    description: Mapped[str] = mapped_column(Text())
+    description: Mapped[Optional[str]] = mapped_column(Text())
     image: Mapped[str] = mapped_column(String(500))
     type_sport_id: Mapped[int] = mapped_column(
         ForeignKey("types_sports.id", ondelete="CASCADE")

@@ -3,6 +3,7 @@ from typing import Optional
 
 from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import validates
 
 from database import Base
 
@@ -16,7 +17,7 @@ class News(Base):
     name: Mapped[str] = mapped_column(String(500))
     date: Mapped[date]
     address: Mapped[str] = mapped_column(String(255))
-    description: Mapped[str] = mapped_column(Text())
+    description: Mapped[Optional[str]] = mapped_column(Text())
     image: Mapped[str] = mapped_column(String(500))
     type_sport_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("types_sports.id", ondelete="CASCADE"), nullable=True
@@ -35,11 +36,18 @@ class PhotoNews(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     image: Mapped[str] = mapped_column(String(500))
+    order: Mapped[int]
     news_id: Mapped[int] = mapped_column(
         ForeignKey("news.id", ondelete="CASCADE"), nullable=True
     )
 
     news: Mapped["News"] = relationship(back_populates="photos")
+
+    @validates("order")
+    def validate_order(self, key, value):
+        if value <= 0:
+            raise ValueError("Order must be greater than 0")
+        return value
 
     def __repr__(self):
         return f"{self.image}"

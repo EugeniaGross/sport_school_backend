@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
 from sqlalchemy import select, func, desc
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 
-from news.models import News
+from news.models import News, PhotoNews
 from database import async_session
 
 

@@ -41,13 +41,10 @@ class AdminAuth(AuthenticationBackend):
         email, password = form["email"], form["password"]
         try:
             user = await users_service().authenticate_user(email, password)
-            request.session.update(
-                {
-                    "token": create_jwt_token(
-                        {"id": user.id}, settings.ADMIN_TOKEN_EXPIRE_DAYS
-                    )
-                }
+            jwt_token = create_jwt_token(
+                {"id": user.id}, settings.ADMIN_TOKEN_EXPIRE_DAYS
             )
+            request.session.update({"token": jwt_token})
             return True
         except Exception as e:
             logger.error(e)
@@ -142,8 +139,9 @@ class SQLAdmin(sqladmin.Admin):
             return await self.templates.TemplateResponse(
                 request, "login.html", context, status_code=400
             )
-
-        return RedirectResponse(request.url_for("admin:index"), status_code=302)
+        response = RedirectResponse(request.url_for("admin:index"), status_code=302)
+        response.set_cookie("token", request.session.get("token"))
+        return response
 
     async def _handle_form_data(self, request: Request, obj: Any = None) -> FormData:
         """
