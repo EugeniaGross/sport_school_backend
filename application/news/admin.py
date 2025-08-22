@@ -52,6 +52,7 @@ class PhotoNewsAdmin(ModelView, model=PhotoNews):
     column_labels = {
         PhotoNews.news: "Новость",
         PhotoNews.image: "Фотография",
+        PhotoNews.order: "Порядок отображения",
     }
     column_searchable_list = [PhotoNews.news]
     column_details_list = [

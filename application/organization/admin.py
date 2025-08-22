@@ -145,6 +145,7 @@ class DocumentCategoryAdmin(ModelView, model=DocumentCategory):
     column_labels = {
         DocumentCategory.name: "Название",
         DocumentCategory.documents: "Документы",
+        DocumentCategory.order: "Порядок отображения",
     }
     column_searchable_list = [DocumentCategory.name]
     column_details_list = [DocumentCategory.name]
