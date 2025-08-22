@@ -14,8 +14,7 @@ from litestar.static_files import create_static_files_router
 from litestar.config.cors import CORSConfig
 from litestar.config.allowed_hosts import AllowedHostsConfig
 from litestar.exceptions import NotAuthorizedException
-
-# from uvicorn.workers import UvicornWorker
+from uvicorn.workers import UvicornWorker
 
 from admin_plugin import AdminPlugin, AdminAuth
 from database import async_engine
@@ -49,8 +48,8 @@ from settings import settings, logging_config, logger
 from users.utils import decode_jwt_token
 
 
-# class APIUvicornWorker(UvicornWorker):
-#     CONFIG_KWARGS = {"log_config": "logging.yml"}
+class APIUvicornWorker(UvicornWorker):
+    CONFIG_KWARGS = {"log_config": "logging.yml"}
 
 
 @post(
