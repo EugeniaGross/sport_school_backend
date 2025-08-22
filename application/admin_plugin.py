@@ -205,6 +205,10 @@ class SQLAdmin(sqladmin.Admin):
             )
 
         form_data_dict = self._denormalize_wtform_data(form.data, model_view.model)
+        if "logo" in form_data_dict:
+            logo = form_data_dict["logo"]
+            file_name = await self.save_file(logo, "images")
+            form_data_dict["logo"] = file_name
         if "image" in form_data_dict:
             image = form_data_dict["image"]
             file_name = await self.save_file(image, "images")
@@ -267,6 +271,11 @@ class SQLAdmin(sqladmin.Admin):
             )
 
         form_data_dict = self._denormalize_wtform_data(form.data, model)
+        if "logo" in form_data_dict and isinstance(
+            logo := form_data_dict["logo"], UploadFile
+        ):
+            file_name = await self.save_file(logo, "images")
+            form_data_dict["logo"] = file_name
         if "image" in form_data_dict and isinstance(
             image := form_data_dict["image"], UploadFile
         ):

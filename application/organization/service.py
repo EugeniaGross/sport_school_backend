@@ -37,6 +37,7 @@ class OrganizationService:
         data = await self.repo.get_organization()
         if data is None:
             return data
+        data.logo = f"{settings.PRODUCTION_URL}{data.logo}"
         data.image = f"{settings.PRODUCTION_URL}{data.image}"
         for sport_object in data.sport_objects:
             sport_object.image = f"{settings.PRODUCTION_URL}{sport_object.image}"
