@@ -30,7 +30,8 @@ class OrganizationAdmin(ModelView, model=Organization):
     ]
     column_labels = {
         Organization.logo: "Логотип",
-        Organization.name: "Название организации",
+        Organization.short_name: "Сокращенное название организации",
+        Organization.name: "Полное название организации",
         Organization.image: "Постер",
         Organization.email: "Электронная почта",
         Organization.address: "Адрес",

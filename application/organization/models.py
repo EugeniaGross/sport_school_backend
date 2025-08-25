@@ -13,6 +13,7 @@ class Organization(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     logo: Mapped[str] = mapped_column(String(500))
+    short_name: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(255))
     image: Mapped[str] = mapped_column(String(500))
     email: Mapped[str] = mapped_column(String(255))
