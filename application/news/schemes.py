@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from litestar.dto import DTOConfig
 from litestar.plugins.sqlalchemy import SQLAlchemyDTO
@@ -14,7 +14,7 @@ NewsShortDTO = SQLAlchemyDTO[
                 "photos",
                 "type_sport_id",
                 "type_sport.description",
-            }
+            },
         ),
     ]
 ]

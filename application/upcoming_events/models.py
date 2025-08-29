@@ -22,4 +22,6 @@ class UpcommingEvents(Base):
         ForeignKey("types_sports.id", ondelete="CASCADE")
     )
 
-    type_sport: Mapped["TypesSports"] = relationship(back_populates="uncoming_events")
+    type_sport: Mapped[Optional["TypesSports"]] = relationship(
+        back_populates="uncoming_events"
+    )

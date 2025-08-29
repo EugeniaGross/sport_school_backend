@@ -23,7 +23,7 @@ class News(Base):
         ForeignKey("types_sports.id", ondelete="CASCADE"), nullable=True
     )
 
-    type_sport: Mapped["TypesSports"] = relationship(back_populates="news")
+    type_sport: Mapped[Optional["TypesSports"]] = relationship(back_populates="news")
 
     photos: Mapped[list["PhotoNews"]] = relationship(back_populates="news")
 
